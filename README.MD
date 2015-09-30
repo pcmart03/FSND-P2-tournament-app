@@ -8,7 +8,6 @@ Before you can run the tournament app, your will need to install:
 - PostgreSQL
 - Python
 - psycopg2
-- psycopg2
 
 ###Running the App
 After downloading the files, open PostgreSQL and create a database for your tournaments and import `tournament.sql`.

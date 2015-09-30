@@ -4,7 +4,6 @@
 #
 
 import psycopg2
-import bleach
 
 
 def connect():
@@ -13,7 +12,8 @@ def connect():
 
 
 def deleteMatches(tournament=1):
-    """Remove all the match records from the database."""
+    """Remove all the match records for selected
+    tournament from the database."""
     DB = connect()
     c = DB.cursor()
     c.execute("DELETE FROM matches WHERE tournament_id = (%s)", (tournament, ))
@@ -22,7 +22,8 @@ def deleteMatches(tournament=1):
 
 
 def deletePlayers(tournament=1):
-    """Remove all the player records from the database."""
+    """Remove all the player records for selected tournament
+    from the database."""
     DB = connect()
     c = DB.cursor()
     c.execute("DELETE FROM players WHERE tournament_id = (%s)",
@@ -32,7 +33,8 @@ def deletePlayers(tournament=1):
 
 
 def countPlayers(tournament=1):
-    """Returns the number of players currently registered."""
+    """Returns the number of players currently registered
+    for selected tournament."""
     DB = connect()
     c = DB.cursor()
     c.execute("SELECT COUNT(*) FROM players WHERE tournament_id = (%s)",
@@ -43,19 +45,15 @@ def countPlayers(tournament=1):
 
 
 def registerPlayer(name, tournament=1):
-    """Adds a player to the tournament database.
+    """Adds a player to the selected tournament.
 
-    The database assigns a unique serial id number for the player.  (This
-    should be handled by your SQL database schema, not in your Python code.)
+    The database assigns a unique serial id number for the player.
 
-    Args:
-      name: the player's full name (need not be unique).
     """
-    clean_name = bleach.clean(name)
     DB = connect()
     c = DB.cursor()
     c.execute("""INSERT INTO players (tournament_id, player_name)
-               VALUES (%s, %s)""", (tournament, clean_name))
+               VALUES (%s, %s)""", (tournament, name))
     DB.commit()
     DB.close()
 
@@ -63,15 +61,6 @@ def registerPlayer(name, tournament=1):
 def playerStandings(tournament=1):
     """Returns a list of the players and their win records, sorted by wins.
 
-    The first entry in the list should be the player in first place, or a
-    player tied for first place if there is currently a tie.
-
-    Returns:
-      A list of tuples, each of which contains (id, name, wins, matches):
-        id: the player's unique id (assigned by the database)
-        name: the player's full name (as registered)
-        wins: the number of matches the player has won
-        matches: the number of matches the player has played
     """
     DB = connect()
     c = DB.cursor()
@@ -86,35 +75,25 @@ def playerStandings(tournament=1):
 
 def reportMatch(winner, loser, tournament=1):
     """Records the outcome of a single match between two players.
-
-    Args:
-      winner:  the id number of the player who won
-      loser:  the id number of the player who lost
+       The database assigns each match a unique id.
     """
-    clean_winner = bleach.clean(winner)
-    clean_loser = bleach.clean(loser)
     DB = connect()
     c = DB.cursor()
     c.execute("""INSERT INTO matches (winner, loser, tournament_id)
-              VALUES (%s, %s, %s)""", (clean_winner, clean_loser, tournament))
+              VALUES (%s, %s, %s)""", (winner, loser, tournament))
     DB.commit()
     DB.close()
 
 
 def swissPairings(tournament=1):
     """Returns a list of pairs of players for the next round of a match.
+    Function performs a self join on the player_standings database
+    to make matches. It compares player id's to ensure players are not paired
+    with themselves.
 
-    Assuming that there are an even number of players registered, each player
-    appears exactly once in the pairings.  Each player is paired with another
-    player with an equal or nearly-equal win record, that is, a player adjacent
-    to him or her in the standings.
+    Each row of the results is appended to the pairs list. The function
+    then returns the list.
 
-    Returns:
-      A list of tuples, each of which contains (id1, name1, id2, name2)
-        id1: the first player's unique id
-        name1: the first player's name
-        id2: the second player's unique id
-        name2: the second player's name
     """
     pairs_list = []
     DB = connect()
@@ -139,7 +118,7 @@ def swissPairings(tournament=1):
 
 
 def createTournament(tournament_name):
-    """ Adds a row to the tournament table """
+    """ Adds a row to the tournament table and assigns a tournament id"""
     clean_name = bleach.clean(tournament_name)
     DB = connect()
     c = DB.cursor()

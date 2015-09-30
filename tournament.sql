@@ -6,6 +6,13 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
+
+--Clears database
+DROP DATABASE IF EXISTS tournament;
+CREATE DATABASE tournament;
+\c tournament;
+
+
 -- Table for storing tournaments
 CREATE TABLE tournaments ( tournament_id SERIAL primary key,
 						   tournament_name TEXT );
