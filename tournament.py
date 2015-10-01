@@ -48,7 +48,9 @@ def registerPlayer(name, tournament=1):
     """Adds a player to the selected tournament.
 
     The database assigns a unique serial id number for the player.
-
+    args:
+    name = name of tournament
+    tournament = id of tournament
     """
     DB = connect()
     c = DB.cursor()
@@ -59,14 +61,21 @@ def registerPlayer(name, tournament=1):
 
 
 def playerStandings(tournament=1):
-    """Returns a list of the players and their win records, sorted by wins.
-
+    """Returns a list of the players, their win records, and total matches
+    sorted by wins.
+    args:
+    tournament = id of tournament
+    Returned Values:
+    id = player id
+    name = player name
+    wins = player wins
+    matches = total matches played by player
     """
     DB = connect()
     c = DB.cursor()
     c.execute("""SELECT id, name, wins, matches FROM player_standings
                  WHERE tournament_id =(%s)
-              GROUP BY id, name, wins, matches ORDER BY wins""",
+              """,
               (tournament,))
     standings = c.fetchall()
     DB.close()
@@ -76,6 +85,10 @@ def playerStandings(tournament=1):
 def reportMatch(winner, loser, tournament=1):
     """Records the outcome of a single match between two players.
        The database assigns each match a unique id.
+        args:
+        winner = id of winner
+        loser = id of loser
+        tournament = id of tournament
     """
     DB = connect()
     c = DB.cursor()
@@ -86,14 +99,22 @@ def reportMatch(winner, loser, tournament=1):
 
 
 def swissPairings(tournament=1):
-    """Returns a list of pairs of players for the next round of a match.
-    Function performs a self join on the player_standings database
+    """Returns a list of pairs of player ids and names for the next round of a
+    match. Function performs a self join on the player_standings database
     to make matches. It compares player id's to ensure players are not paired
     with themselves.
 
     Each row of the results is appended to the pairs list. The function
     then returns the list.
 
+    args:
+    tournament = id of tournament
+
+    Returned Values:
+    id1 = id of first player
+    name1 = name of first player
+    id2 = id of second player
+    name2 = name of second player
     """
     pairs_list = []
     DB = connect()
@@ -117,12 +138,13 @@ def swissPairings(tournament=1):
     return pairs_list
 
 
-def createTournament(tournament_name):
-    """ Adds a row to the tournament table and assigns a tournament id"""
-    clean_name = bleach.clean(tournament_name)
+def createTournament(name):
+    """ Adds a row to the tournament table and assigns a tournament id
+        args:
+        name = name of tournament"""
     DB = connect()
     c = DB.cursor()
     c.execute("INSERT INTO tournaments(tournament_name) VALUES (%s)",
-              (clean_name, ))
+              (name, ))
     DB.commit()
     DB.close()
