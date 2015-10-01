@@ -13,7 +13,9 @@ def connect():
 
 def deleteMatches(tournament=1):
     """Remove all the match records for selected
-    tournament from the database."""
+    tournament from the database.
+    args:
+    tournament = tournament_id"""
     DB = connect()
     c = DB.cursor()
     c.execute("DELETE FROM matches WHERE tournament_id = (%s)", (tournament, ))
@@ -23,7 +25,9 @@ def deleteMatches(tournament=1):
 
 def deletePlayers(tournament=1):
     """Remove all the player records for selected tournament
-    from the database."""
+    from the database.
+    args:
+    tournament = tournament_id"""
     DB = connect()
     c = DB.cursor()
     c.execute("DELETE FROM players WHERE tournament_id = (%s)",
@@ -34,7 +38,10 @@ def deletePlayers(tournament=1):
 
 def countPlayers(tournament=1):
     """Returns the number of players currently registered
-    for selected tournament."""
+    for selected tournament.
+    args:
+    tournament = tournament_id
+    """
     DB = connect()
     c = DB.cursor()
     c.execute("SELECT COUNT(*) FROM players WHERE tournament_id = (%s)",
