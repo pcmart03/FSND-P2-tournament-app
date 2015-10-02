@@ -41,7 +41,7 @@ CREATE VIEW player_matches AS (
 	    players.player_id as player_id, 
 		COUNT(matches.match_id) as total_matches
 	FROM players LEFT JOIN matches 
-	   ON (players.player_id = matches.loser 
+	   ON (players.player_id = matches.loser) 
     OR players.player_id = matches.winner
     AND (players.tournament_id = matches.tournament_id)
 	GROUP BY tourn_id, players.player_id );
