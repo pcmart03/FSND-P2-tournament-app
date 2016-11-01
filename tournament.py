@@ -56,7 +56,7 @@ def registerPlayer(name, tournament=1):
 
     The database assigns a unique serial id number for the player.
     args:
-    name = name of tournament
+    name = name of tournament player
     tournament = id of tournament
     """
     DB = connect()
