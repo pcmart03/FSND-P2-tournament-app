@@ -1,15 +1,16 @@
-##Udacity FSND P2 - Tournament APP
+## Udacity FSND P2 - Tournament APP
 
-###Description
+### Description
 The tournament app is a tool for managing Swiss style tournaments. It is capable of managing multiple tournaments at once.  You can use it to generate match pairs, record match results and retrieve player standings.
 
-###Requirements
+### Requirements
 Before you can run the tournament app, your will need to install:
+
 - PostgreSQL
 - Python
 - psycopg2
 
-###Running the App
+### Running the App
 After downloading the files, open PostgreSQL and create a database for your tournaments and import `tournament.sql`.
 
 **Important** You must create a tournament before any app functions will work. 
